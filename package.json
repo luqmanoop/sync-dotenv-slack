@@ -2,9 +2,13 @@
   "name": "sync-dotenv-slack",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf dist",
+    "bundle": "parcel cli.ts --target node",
+    "build": "npm-run-all clean bundle",
+    "dev": "nodemon --watch dist --exec 'node dist/cli.js'",
+    "start": "concurrently 'npm:build' 'npm:dev'"
   },
   "repository": {
     "type": "git",
@@ -18,10 +22,16 @@
   },
   "homepage": "https://github.com/codeshifu/sync-dotenv-slack#readme",
   "devDependencies": {
+    "@types/dotenv": "6.1.1",
+    "concurrently": "4.1.2",
     "nodemon": "1.19.3",
     "npm-run-all": "4.1.5",
     "parcel-bundler": "1.12.3",
     "rimraf": "3.0.0",
     "typescript": "3.6.3"
+  },
+  "dependencies": {
+    "dotenv": "8.1.0",
+    "slackbots": "1.2.0"
   }
 }
