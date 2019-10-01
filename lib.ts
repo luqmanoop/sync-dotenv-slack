@@ -1,6 +1,5 @@
 import { WebClient } from '@slack/web-api';
 import dotenv from 'dotenv';
-import parseDotenv from 'parse-dotenv';
 import fs from 'fs';
 
 dotenv.config();
@@ -38,17 +37,18 @@ const getLatestMessage = async (channel: IChannel): Promise<IMessage> => {
   return messages[0];
 }
 
-const alertChannel = async (channelName: string, text: string) => {
+const getEnv = (path: string = '.env') => {
+  return fs.readFileSync(path);
+};
+
+const alertChannel = async (channelName: string, text: Buffer) => {
   try {
     const channel = await getChannel(channelName);
     const oldEnvPost = await getLatestMessage(channel);
-    await web.chat.postMessage({ channel: channel.name, text, ...params });
+    await web.files.upload({ filename: Date.now().toString(), file: getEnv(), channels: channel.name })
+    console.log(oldEnvPost);
     process.exit(0);
   } catch (error) {
     process.exit(1);
   }
-};
-
-const getEnv = (path: string = '.env') => {
-  return fs.readFileSync(path, { encoding: 'utf-8' });
 };
