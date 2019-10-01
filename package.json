@@ -31,7 +31,8 @@
     "typescript": "3.6.3"
   },
   "dependencies": {
-    "dotenv": "8.1.0",
-    "slackbots": "1.2.0"
+    "@slack/events-api": "2.3.0",
+    "@slack/web-api": "5.2.0",
+    "dotenv": "8.1.0"
   }
 }
