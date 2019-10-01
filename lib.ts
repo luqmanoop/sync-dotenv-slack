@@ -1,5 +1,6 @@
 import SlackBot from 'slackbots';
 import dotenv from 'dotenv';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -12,6 +13,11 @@ const params = {
   icon_emoji: ':dog:'
 }
 
+const getEnv = (path: string = '.env') => {
+  return fs.readFileSync(path, { encoding: 'utf-8' });
+}
+
 bot.on('start', () => {
-  bot.postMessage('general', 'Hello, world', params)
+  const env = getEnv();
+  bot.postMessage('general', env, params)
 })
