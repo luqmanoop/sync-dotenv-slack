@@ -1,1 +1,3 @@
-import './lib'
+import { alertChannel, getEnv } from './lib';
+
+alertChannel('general', getEnv());
