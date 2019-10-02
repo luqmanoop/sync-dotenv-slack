@@ -9,10 +9,6 @@ dotenv.config();
 const token = process.env.SLACK_TOKEN;
 const web = new WebClient(token);
 
-const params = {
-  icon_emoji: ':dog:',
-  username: '.envBot'
-};
 interface IChannel {
   name: string;
   id: string;
@@ -71,6 +67,11 @@ const keys = (obj: {}): string[] => Object.keys(obj);
 const alertChannel = async (channelName: string, file: Buffer) => {
   try {
     const channel = await getChannel(channelName);
+    if (!channel) {
+      console.log(`${channelName} channel not found. Perhaps you forgot to add envbot to the private channel`);
+      process.exit(1);
+    }
+
     const latestFile = await getLatestFile(channel);
     if (latestFile && latestFile.url_private) {
       const contents = await getFileContents(latestFile);
@@ -102,4 +103,4 @@ const alertChannel = async (channelName: string, file: Buffer) => {
   }
 };
 
-alertChannel('bot', getEnv());
+alertChannel('frontend', getEnv());

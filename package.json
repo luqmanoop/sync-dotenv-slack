@@ -5,7 +5,7 @@
   "main": "dist/cli.js",
   "scripts": {
     "clean": "rimraf dist",
-    "bundle": "parcel cli.ts --target node",
+    "bundle": "parcel cli.ts --target node --no-cache",
     "build": "npm-run-all clean bundle",
     "dev": "nodemon --watch dist --exec 'node dist/cli.js'",
     "start": "concurrently 'npm:build' 'npm:dev'"
