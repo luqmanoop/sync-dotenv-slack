@@ -6,12 +6,15 @@ import parseEnv from 'parse-dotenv';
 
 dotenv.config();
 
-const token = process.env.SLACK_TOKEN;
-const web = new WebClient(token);
+const botToken = process.env.SLACK_BOT_TOKEN;
+const userToken = process.env.SLACK_USER_TOKEN;
+
+const web = new WebClient(botToken);
 
 interface IChannel {
   name: string;
   id: string;
+  is_private: boolean;
 }
 
 interface IFile {
@@ -33,18 +36,23 @@ const getChannel = async (channelName: string): Promise<IChannel> => {
   return channels.filter(channel => channel.name === channelName)[0];
 };
 
-const getLatestFile = async (channel: IChannel): Promise<IFile> => {
-  const { messages } = await web.channels.history({
+const getChannelHistory = (channel: IChannel) => {
+  return web[channel.is_private ? 'groups' : 'conversations'].history({
     channel: channel.id,
-    count: 1
+    count: 1,
+    token: userToken
   });
+};
+
+const getLatestFile = async (channel: IChannel): Promise<IFile> => {
+  const { messages } = await getChannelHistory(channel);
   return messages[0].files ? messages[0].files[0] : null;
 };
 
 const getFileContents = async (file: IFile) => {
   const { data } = await axios(file.url_private, {
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${botToken}`
     }
   });
   return data;
@@ -58,17 +66,19 @@ const uploadEnv = (file: Buffer, channel: IChannel) => {
   });
 };
 
-const getEnv = (path: string = '.env') => {
+export const getEnv = (path: string = '.env') => {
   return fs.readFileSync(path);
 };
 
 const keys = (obj: {}): string[] => Object.keys(obj);
 
-const alertChannel = async (channelName: string, file: Buffer) => {
+export const alertChannel = async (channelName: string, file: Buffer) => {
   try {
     const channel = await getChannel(channelName);
     if (!channel) {
-      console.log(`${channelName} channel not found. Perhaps you forgot to add envbot to the private channel`);
+      console.log(
+        `${channelName} channel not found. Perhaps you forgot to add envbot to the private channel`
+      );
       process.exit(1);
     }
 
@@ -76,7 +86,7 @@ const alertChannel = async (channelName: string, file: Buffer) => {
     if (latestFile && latestFile.url_private) {
       const contents = await getFileContents(latestFile);
       const filename = `.env.${Date.now().toString()}`;
-      
+
       fs.writeFileSync(filename, contents);
 
       const localEnv = parseEnv();
@@ -102,5 +112,3 @@ const alertChannel = async (channelName: string, file: Buffer) => {
     process.exit(1);
   }
 };
-
-alertChannel('frontend', getEnv());
