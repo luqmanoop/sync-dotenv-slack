@@ -58,6 +58,8 @@ const getEnv = (path: string = '.env') => {
   return fs.readFileSync(path);
 };
 
+const keys = (obj: {}): string[] => Object.keys(obj);
+
 const alertChannel = async (channelName: string, file: Buffer) => {
   try {
     const channel = await getChannel(channelName);
@@ -70,12 +72,12 @@ const alertChannel = async (channelName: string, file: Buffer) => {
     const localEnv = parseEnv();
     const slackEnv = parseEnv(filename);
 
-    const staleEnv = !Object.keys(localEnv).every(key =>
-      slackEnv.hasOwnProperty(key)
-    );
+    const variables = keys(localEnv).every(key => slackEnv.hasOwnProperty(key));
+    const inSync = variables && keys(localEnv).length === keys(slackEnv).length
+    
     fs.unlinkSync(filename);
 
-    if (staleEnv) {
+    if (!inSync) {
       await web.files.upload({
         filename: Date.now().toString(),
         file,
