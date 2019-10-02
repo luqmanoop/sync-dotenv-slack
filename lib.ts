@@ -54,6 +54,14 @@ const getFileContents = async (file: IFile) => {
   return data;
 };
 
+const uploadEnv = (file: Buffer, channel: IChannel) => {
+  return web.files.upload({
+    filename: Date.now().toString(),
+    file,
+    channels: channel.name
+  });
+};
+
 const getEnv = (path: string = '.env') => {
   return fs.readFileSync(path);
 };
@@ -64,29 +72,32 @@ const alertChannel = async (channelName: string, file: Buffer) => {
   try {
     const channel = await getChannel(channelName);
     const latestFile = await getLatestFile(channel);
-    const contents = await getFileContents(latestFile);
+    if (latestFile && latestFile.url_private) {
+      const contents = await getFileContents(latestFile);
+      const filename = `.env.${Date.now().toString()}`;
+      
+      fs.writeFileSync(filename, contents);
 
-    const filename = `.env.${Date.now().toString()}`;
-    fs.writeFileSync(filename, contents);
+      const localEnv = parseEnv();
+      const slackEnv = parseEnv(filename);
 
-    const localEnv = parseEnv();
-    const slackEnv = parseEnv(filename);
+      const variables = keys(localEnv).every(key =>
+        slackEnv.hasOwnProperty(key)
+      );
+      const inSync =
+        variables && keys(localEnv).length === keys(slackEnv).length;
 
-    const variables = keys(localEnv).every(key => slackEnv.hasOwnProperty(key));
-    const inSync = variables && keys(localEnv).length === keys(slackEnv).length
-    
-    fs.unlinkSync(filename);
+      fs.unlinkSync(filename);
 
-    if (!inSync) {
-      await web.files.upload({
-        filename: Date.now().toString(),
-        file,
-        channels: channel.name
-      });
+      if (!inSync) {
+        await uploadEnv(file, channel);
+      }
+    } else {
+      await uploadEnv(file, channel);
     }
-
     process.exit(0);
   } catch (error) {
+    console.log(error.message);
     process.exit(1);
   }
 };
