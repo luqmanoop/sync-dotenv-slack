@@ -8,8 +8,7 @@
     "bundle": "parcel build cli.ts --target node --no-cache",
     "build": "npm-run-all --parallel clean bundle",
     "build:start": "npm run build -- start",
-    "dev": "nodemon --ext ts --exec 'npm run build:start'",
-    "_dev": "nodemon --ext ts --exec 'npm run build && node dist/cli.js'",
+    "dev": "nodemon --ext ts --exec 'npm run build && node dist/cli.js'",
     "start": "node dist/cli.js"
   },
   "repository": {
