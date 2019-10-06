@@ -1,5 +1,4 @@
 import { WebClient, WebAPICallResult } from '@slack/web-api';
-import { join } from 'path';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import axios from 'axios';
@@ -119,7 +118,7 @@ export const alertChannel = async (channelName: string, file: Buffer) => {
 
       fs.writeFileSync(filename, contents);
 
-      const localEnv = parseEnv();
+      const localEnv = excludeIgnored();
       const slackEnv = parseEnv(filename);
 
       const variables = keys(localEnv).every(key =>
@@ -128,9 +127,17 @@ export const alertChannel = async (channelName: string, file: Buffer) => {
       const keysInSync =
         variables && keys(localEnv).length === keys(slackEnv).length;
 
-      const valuesInSync =
-        new Set([...values(localEnv), ...values(slackEnv)]).size ===
-        values(localEnv).length;
+      const fCombinedVals = Array.from(
+        new Set([...values(localEnv), ...values(slackEnv)])
+      ).filter(val => val !== '');
+
+      const fSlackVals = values(slackEnv).filter(val => val !== '');
+      const fLocalVals = values(localEnv).filter(val => val !== '');
+      const valSyncChecks = [
+        fCombinedVals.length === fSlackVals.length,
+        fCombinedVals.length === fLocalVals.length
+      ];
+      const valuesInSync = !valSyncChecks.includes(false);
 
       const inSync = keysInSync && valuesInSync;
 
