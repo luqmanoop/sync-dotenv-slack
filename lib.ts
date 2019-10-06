@@ -1,4 +1,4 @@
-import { WebClient } from '@slack/web-api';
+import { WebClient, WebAPICallResult } from '@slack/web-api';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import axios from 'axios';
@@ -23,6 +23,10 @@ interface IFile {
   url_private: string;
 }
 
+interface IMessageRes extends WebAPICallResult {
+  messages?: [{ type: string; user: string; ts: string; files: any }];
+}
+
 const getChannels = async (): Promise<IChannel[]> => {
   const { channels } = await web.conversations.list({
     exclude_archived: true,
@@ -39,13 +43,23 @@ const getChannel = async (channelName: string): Promise<IChannel> => {
 const getChannelHistory = (channel: IChannel) => {
   return web[channel.is_private ? 'groups' : 'conversations'].history({
     channel: channel.id,
-    count: 1,
+    count: 20,
     token: userToken
   });
 };
 
+const getLatestMessageFromBot = async (channel: IChannel) => {
+  const { user_id: BOT_SLACK_ID } = await web.auth.test();
+  const { messages }: IMessageRes = await getChannelHistory(channel);
+
+  const mostRecentBotMessages = messages
+    .filter(message => message.user === BOT_SLACK_ID)
+    .sort((a, b) => parseFloat(a.ts) - parseFloat(b.ts));
+  return [mostRecentBotMessages[mostRecentBotMessages.length - 1]];
+};
+
 const getLatestFile = async (channel: IChannel): Promise<IFile> => {
-  const { messages } = await getChannelHistory(channel);
+  const messages = await getLatestMessageFromBot(channel);
   return messages[0].files ? messages[0].files[0] : null;
 };
 
