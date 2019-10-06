@@ -81,6 +81,7 @@ export const getEnv = (path: string = '.env') => {
 };
 
 const keys = (obj: {}): string[] => Object.keys(obj);
+const values = (obj: {}): string[] => Object.values(obj);
 
 export const alertChannel = async (channelName: string, file: Buffer) => {
   try {
@@ -105,8 +106,14 @@ export const alertChannel = async (channelName: string, file: Buffer) => {
       const variables = keys(localEnv).every(key =>
         slackEnv.hasOwnProperty(key)
       );
-      const inSync =
+      const keysInSync =
         variables && keys(localEnv).length === keys(slackEnv).length;
+
+      const valuesInSync =
+        new Set([...values(localEnv), ...values(slackEnv)]).size ===
+        values(localEnv).length;
+
+      const inSync = keysInSync && valuesInSync;
 
       fs.unlinkSync(filename);
 
