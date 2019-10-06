@@ -1,4 +1,5 @@
 import { WebClient, WebAPICallResult } from '@slack/web-api';
+import { join } from 'path';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import axios from 'axios';
@@ -76,8 +77,26 @@ const uploadEnv = (file: Buffer, channel: IChannel) => {
   });
 };
 
+const isPrivateKey = (key: string): boolean => {
+  return /#ignore|#private|#local/gi.test(key);
+};
+
+const excludeIgnored = (path: string = '.env') => {
+  const env = parseEnv(path);
+  return Object.keys(env).reduce((acc, cur) => {
+    const currentValue: string = env[cur];
+    const val = isPrivateKey(currentValue) ? '' : currentValue;
+    return { ...acc, [cur]: val };
+  }, {});
+};
+
+const objToText = (obj: object) =>
+  Object.keys(obj)
+    .reduce((acc, cur) => [...acc, `${cur}='${obj[cur]}'`], [])
+    .join('\n');
+
 export const getEnv = (path: string = '.env') => {
-  return fs.readFileSync(path);
+  return Buffer.from(objToText(excludeIgnored(path)));
 };
 
 const keys = (obj: {}): string[] => Object.keys(obj);
