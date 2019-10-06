@@ -48,19 +48,15 @@ const getChannelHistory = (channel: IChannel) => {
   });
 };
 
-const getLatestMessageFromBot = async (channel: IChannel) => {
-  const { user_id: BOT_SLACK_ID } = await web.auth.test();
-  const { messages }: IMessageRes = await getChannelHistory(channel);
-
-  const mostRecentBotMessages = messages
-    .filter(message => message.user === BOT_SLACK_ID)
-    .sort((a, b) => parseFloat(a.ts) - parseFloat(b.ts));
-  return [mostRecentBotMessages[mostRecentBotMessages.length - 1]];
-};
-
-const getLatestFile = async (channel: IChannel): Promise<IFile> => {
-  const messages = await getLatestMessageFromBot(channel);
-  return messages[0].files ? messages[0].files[0] : null;
+const getLatestFileFromBot = async (channel: IChannel) => {
+  const { user_id: SLACK_BOT_ID } = await web.auth.test();
+  const { files } = await web.files.list({
+    channel: channel.id,
+    user: `${SLACK_BOT_ID}`,
+    count: 1,
+    token: userToken
+  });
+  return files[0] || null;
 };
 
 const getFileContents = async (file: IFile) => {
@@ -96,7 +92,7 @@ export const alertChannel = async (channelName: string, file: Buffer) => {
       process.exit(1);
     }
 
-    const latestFile = await getLatestFile(channel);
+    const latestFile = await getLatestFileFromBot(channel);
     if (latestFile && latestFile.url_private) {
       const contents = await getFileContents(latestFile);
       const filename = `.env.${Date.now().toString()}`;
