@@ -1,3 +1,8 @@
+import dotenv from 'dotenv';
 import { alertChannel, getEnv } from './lib';
 
-alertChannel('general', getEnv());
+dotenv.config();
+
+const { ENV_CHANNEL = 'general' } = process.env;
+
+alertChannel(ENV_CHANNEL, getEnv());
