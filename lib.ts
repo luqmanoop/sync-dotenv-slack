@@ -1,4 +1,4 @@
-import { WebClient, WebAPICallResult } from '@slack/web-api';
+import { WebClient } from '@slack/web-api';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import axios from 'axios';
@@ -75,7 +75,7 @@ const values = (obj: {}): string[] => Object.values(obj);
 
 export const alertChannel = async (channelName: string, file: Buffer) => {
   if (!channelName) {
-    spinner.warn('channel name is required');
+    spinner.fail('channel name is required');
     process.exit(1);
   }
   try {
@@ -112,7 +112,8 @@ export const alertChannel = async (channelName: string, file: Buffer) => {
       fs.unlinkSync(filename);
 
       if (!inSync) {
-        spinner.text = 'env is out of sync. performing sync';
+        spinner.text = 'env out of sync';
+        spinner.text = 'synchronizing .env with slack channel'
         await uploadEnv(file, channel);
         spinner.succeed('sync successful 🎉');
       } else spinner.info('env in sync');

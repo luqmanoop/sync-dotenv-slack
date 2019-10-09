@@ -11,6 +11,9 @@
     "dev": "nodemon --ext ts --exec 'npm run build && node dist/cli.js'",
     "start": "node dist/cli.js"
   },
+  "bin": {
+    "envbot": "dist/cli.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codeshifu/sync-dotenv-slack.git"
@@ -25,9 +28,11 @@
   "devDependencies": {
     "@types/dotenv": "6.1.1",
     "@types/ora": "3.2.0",
+    "@types/pkg-conf": "3.0.0",
     "nodemon": "1.19.3",
     "npm-run-all": "4.1.5",
     "parcel-bundler": "1.12.3",
+    "parcel-plugin-shebang": "1.2.8",
     "rimraf": "3.0.0",
     "typescript": "3.6.3"
   },
@@ -36,6 +41,7 @@
     "axios": "0.19.0",
     "dotenv": "8.1.0",
     "ora": "4.0.2",
-    "parse-dotenv": "2.0.1"
+    "parse-dotenv": "2.0.1",
+    "pkg-conf": "3.1.0"
   }
 }
