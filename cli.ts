@@ -1,8 +1,14 @@
-import dotenv from 'dotenv';
+#!/usr/bin/env node
 import { alertChannel, getEnv } from './lib';
+import pkgConf from 'pkg-conf';
 
-dotenv.config();
+interface IConfig {
+  channel: string;
+  include: string[]|boolean;
+}
 
-const { ENV_CHANNEL = 'general' } = process.env;
-
-alertChannel(ENV_CHANNEL, getEnv());
+(async () => {
+  const config: IConfig = (await pkgConf('envbot')) as any;
+  const { channel, include } = config;
+  alertChannel(channel, getEnv());
+})();
