@@ -3,8 +3,10 @@ import dotenv from 'dotenv';
 import fs from 'fs';
 import axios from 'axios';
 import parseEnv from 'parse-dotenv';
+import ora from 'ora';
 
 dotenv.config();
+const spinner = ora('one moment').start();
 
 const botToken = process.env.SLACK_BOT_TOKEN;
 const userToken = process.env.SLACK_USER_TOKEN;
@@ -23,10 +25,6 @@ interface IFile {
   url_private: string;
 }
 
-interface IMessageRes extends WebAPICallResult {
-  messages?: [{ type: string; user: string; ts: string; files: any }];
-}
-
 const getChannels = async (): Promise<IChannel[]> => {
   const { channels } = await web.conversations.list({
     exclude_archived: true,
@@ -38,14 +36,6 @@ const getChannels = async (): Promise<IChannel[]> => {
 const getChannel = async (channelName: string): Promise<IChannel> => {
   const channels = await getChannels();
   return channels.filter(channel => channel.name === channelName)[0];
-};
-
-const getChannelHistory = (channel: IChannel) => {
-  return web[channel.is_private ? 'groups' : 'conversations'].history({
-    channel: channel.id,
-    count: 20,
-    token: userToken
-  });
 };
 
 const getLatestFileFromBot = async (channel: IChannel) => {
@@ -84,17 +74,21 @@ const keys = (obj: {}): string[] => Object.keys(obj);
 const values = (obj: {}): string[] => Object.values(obj);
 
 export const alertChannel = async (channelName: string, file: Buffer) => {
+  if (!channelName) {
+    spinner.warn('channel name is required');
+    process.exit(1);
+  }
   try {
+    spinner.text = `finding ${channelName} channel`;
     const channel = await getChannel(channelName);
     if (!channel) {
-      console.log(
-        `${channelName} channel not found. Perhaps you forgot to add envbot to the private channel`
-      );
+      spinner.warn(`${channelName} channel not found. Perhaps you forgot to add envbot to the private channel`);
       process.exit(1);
     }
 
     const latestFile = await getLatestFileFromBot(channel);
     if (latestFile && latestFile.url_private) {
+      spinner.text = 'comparing envs';
       const contents = await getFileContents(latestFile);
       const filename = `.env.${Date.now().toString()}`;
 
@@ -118,14 +112,18 @@ export const alertChannel = async (channelName: string, file: Buffer) => {
       fs.unlinkSync(filename);
 
       if (!inSync) {
+        spinner.text = 'env is out of sync. performing sync';
         await uploadEnv(file, channel);
-      }
+        spinner.succeed('sync successful 🎉');
+      } else spinner.info('env in sync');
     } else {
       await uploadEnv(file, channel);
     }
+    spinner.stop();
     process.exit(0);
   } catch (error) {
-    console.log(error.message);
+    spinner.fail(error.message);
+    spinner.stop();
     process.exit(1);
   }
 };
