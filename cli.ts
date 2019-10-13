@@ -1,13 +1,10 @@
 #!/usr/bin/env node
-import { alertChannel, getEnv } from './lib';
 import pkgConf from 'pkg-conf';
 
-interface IConfig {
-  channel: string;
-  include: string[];
-}
+import { alertChannel } from './lib';
+import { Config } from './lib.model';
 
 (async () => {
-  const config: IConfig = (await pkgConf('envbot')) as any;
-  alertChannel({ ...config }, getEnv()); 
+  const config: Config = (await pkgConf('envbot')) as any;
+  alertChannel({ ...config }); 
 })();
