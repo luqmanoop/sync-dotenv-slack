@@ -8,7 +8,7 @@
     "bundle": "parcel build cli.ts --target node --no-cache",
     "build": "npm-run-all --parallel clean bundle",
     "build:start": "npm run build -- start",
-    "dev": "nodemon --ext ts --exec 'npm run build && node dist/cli.js'",
+    "dev": "nodemon --ext ts,json --exec 'npm run build && node dist/cli.js'",
     "start": "node dist/cli.js"
   },
   "bin": {
@@ -29,6 +29,7 @@
     "@types/dotenv": "6.1.1",
     "@types/ora": "3.2.0",
     "@types/pkg-conf": "3.0.0",
+    "@types/temp-write": "4.0.0",
     "nodemon": "1.19.3",
     "npm-run-all": "4.1.5",
     "parcel-bundler": "1.12.3",
@@ -42,6 +43,7 @@
     "dotenv": "8.1.0",
     "ora": "4.0.2",
     "parse-dotenv": "2.0.1",
-    "pkg-conf": "3.1.0"
+    "pkg-conf": "3.1.0",
+    "temp-write": "4.0.0"
   }
 }
