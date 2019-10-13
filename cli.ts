@@ -4,11 +4,10 @@ import pkgConf from 'pkg-conf';
 
 interface IConfig {
   channel: string;
-  include: string[]|boolean;
+  include: string[];
 }
 
 (async () => {
   const config: IConfig = (await pkgConf('envbot')) as any;
-  const { channel, include } = config;
-  alertChannel(channel, getEnv());
+  alertChannel({ ...config }, getEnv()); 
 })();
