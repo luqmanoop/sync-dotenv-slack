@@ -4,7 +4,7 @@ import parseEnv from 'parse-dotenv';
 import tempWrite from 'temp-write';
 import SlackBot from './bot';
 import { Config } from './lib.model';
-import { getEnvContents, keys, exit } from './utils';
+import { getEnvContents, keys, exit, valuesSyncCheck } from './utils';
 
 dotenv.config();
 const { SLACK_BOT_TOKEN: botToken, SLACK_USER_TOKEN: userToken } = process.env;
@@ -42,11 +42,8 @@ export const alertChannel = async (options: Config) => {
       const keysInSync =
         variables && keys(localEnv).length === keys(slackEnv).length;
 
-      // const valuesInSync =
-      //   new Set([...values(localEnv), ...values(slackEnv)]).size ===
-      //   values(localEnv).length;
-
-      const inSync = keysInSync;
+      const valuesInSync = valuesSyncCheck(localEnv, slackEnv, patterns);
+      const inSync = keysInSync && valuesInSync;
 
       if (!inSync) {
         spinner.text = 'env not in sync';
