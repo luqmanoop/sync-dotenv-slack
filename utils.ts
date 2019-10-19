@@ -43,6 +43,17 @@ export const getFinalEnvObj = (env: Env, patterns: string[]): Env => {
   return envObj;
 };
 
+export const valuesSyncCheck = (
+  localEnv: {},
+  slackEnv: {},
+  patterns: string[]
+): boolean => {
+  const finalLocalEnv = getFinalEnvObj(localEnv, patterns);
+  return keys(finalLocalEnv)
+    .map(key => finalLocalEnv[key] === slackEnv[key])
+    .every(sync => sync === true);
+};
+
 export const getEnvContents = (env: Env, patterns: string[]) => {
   return envToString(getFinalEnvObj(env, patterns));
 }
