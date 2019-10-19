@@ -2,7 +2,7 @@
 import pkgConf from 'pkg-conf';
 
 import { alertChannel } from './lib';
-import { Config } from './lib.model';
+import { Config } from './lib/models';
 
 const defaultConfig: Config = {
   include: [],

@@ -3,7 +3,7 @@ import ora from 'ora';
 import parseEnv from 'parse-dotenv';
 import tempWrite from 'temp-write';
 import SlackBot from './bot';
-import { Config } from './lib.model';
+import { Config } from './models';
 import { getEnvContents, keys, exit, valuesSyncCheck } from './utils';
 
 dotenv.config();
@@ -13,7 +13,7 @@ export const alertChannel = async (options: Config) => {
   const spinner = ora('one moment').start();
   try {
     const { channel: channelName, include: patterns } = options;
-    
+
     if (!channelName) exit(1, spinner, 'channel name is required');
 
     const bot = new SlackBot({ botToken, userToken });

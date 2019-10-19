@@ -1,5 +1,5 @@
 import { WebClient } from '@slack/web-api';
-import { Token, Channel, IFile, Env } from './lib.model';
+import { Token, Channel, IFile } from './models';
 import Axios from 'axios';
 import tempWrite from 'temp-write';
 import { readFileSync } from 'fs';
