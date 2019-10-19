@@ -25,7 +25,7 @@ export const getFinalEnvObj = (env: Env, patterns: string[]): Env => {
     return envObj;
   }
 
-  patterns.forEach(pattern => {
+  patterns.map(pattern => pattern.trim()).forEach(pattern => {
     if (pattern.startsWith('!')) blacklist.push(pattern.slice(1));
     else whitelist.push(pattern);
   });
