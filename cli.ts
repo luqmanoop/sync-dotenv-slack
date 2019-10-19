@@ -4,7 +4,12 @@ import pkgConf from 'pkg-conf';
 import { alertChannel } from './lib';
 import { Config } from './lib.model';
 
+const defaultConfig: Config = {
+  include: [],
+  channel: null
+};
+
 (async () => {
   const config: Config = (await pkgConf('envbot')) as any;
-  alertChannel({ ...config }); 
+  alertChannel({ ...defaultConfig, ...config });
 })();
