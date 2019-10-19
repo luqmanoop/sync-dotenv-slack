@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { Env } from './lib.model';
+import { Env } from './models';
 import { Ora } from 'ora';
 
 export const getEnv = (path: string = '.env') => readFileSync(path);
@@ -25,10 +25,12 @@ export const getFinalEnvObj = (env: Env, patterns: string[]): Env => {
     return envObj;
   }
 
-  patterns.map(pattern => pattern.trim()).forEach(pattern => {
-    if (pattern.startsWith('!')) blacklist.push(pattern.slice(1));
-    else whitelist.push(pattern);
-  });
+  patterns
+    .map(pattern => pattern.trim())
+    .forEach(pattern => {
+      if (pattern.startsWith('!')) blacklist.push(pattern.slice(1));
+      else whitelist.push(pattern);
+    });
 
   const envToIncludeWithValues = keys(envObj).filter((key: string) => {
     return !whitelist.length || whitelist.includes('*')
@@ -56,7 +58,7 @@ export const valuesSyncCheck = (
 
 export const getEnvContents = (env: Env, patterns: string[]) => {
   return envToString(getFinalEnvObj(env, patterns));
-}
+};
 
 export const exit = (code: number, spinner: Ora, msg?: string) => {
   if (code > 0 && msg) spinner.fail(msg);
