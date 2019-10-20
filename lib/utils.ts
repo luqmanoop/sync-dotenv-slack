@@ -46,8 +46,8 @@ export const getFinalEnvObj = (env: Env, patterns: string[]): Env => {
 };
 
 export const valuesSyncCheck = (
-  localEnv: {},
-  slackEnv: {},
+  localEnv: Env,
+  slackEnv: Env,
   patterns: string[]
 ): boolean => {
   const finalLocalEnv = getFinalEnvObj(localEnv, patterns);

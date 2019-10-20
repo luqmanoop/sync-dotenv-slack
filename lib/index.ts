@@ -2,26 +2,24 @@ import dotenv from 'dotenv';
 import ora from 'ora';
 import parseEnv from 'parse-dotenv';
 import tempWrite from 'temp-write';
-import SlackBot from './bot';
+import bot from './bot';
 import { Config } from './models';
 import { getEnvContents, keys, exit, valuesSyncCheck } from './utils';
 
 dotenv.config();
-const { SLACK_BOT_TOKEN: botToken, SLACK_USER_TOKEN: userToken } = process.env;
 
 export const alertChannel = async (options: Config) => {
   const spinner = ora('one moment').start();
   try {
     const { channel: channelName, include: patterns } = options;
 
-    if (!channelName) exit(1, spinner, 'channel name is required');
+    if (!channelName) return exit(1, spinner, 'channel name is required');
 
-    const bot = new SlackBot({ botToken, userToken });
     spinner.text = `looking up ${channelName} channel`;
     const channel = await bot.channel(channelName);
 
     if (!channel) {
-      exit(
+      return exit(
         1,
         spinner,
         `${channelName} channel not found. Perhaps you forgot to invite envbot to the private channel`
@@ -55,7 +53,6 @@ export const alertChannel = async (options: Config) => {
       spinner.text = 'synchronizing env with slack channel';
       await bot.upload(getEnvContents(localEnv, patterns), channel);
       spinner.succeed('sync successful 🎉');
-      exit(0, spinner);
     }
     exit(0, spinner);
   } catch (error) {
