@@ -4,7 +4,9 @@ import Axios from 'axios';
 import tempWrite from 'temp-write';
 import { readFileSync } from 'fs';
 
-export default class {
+const { SLACK_BOT_TOKEN: botToken, SLACK_USER_TOKEN: userToken } = process.env;
+
+class SlackBot {
   web: WebClient;
   botToken: string;
   userToken: string;
@@ -40,7 +42,7 @@ export default class {
   }
 
   async fileContents(file: IFile) {
-    const { data } = await Axios(file.url_private, {
+    const { data } = await Axios.get(file.url_private, {
       headers: {
         Authorization: `Bearer ${this.botToken}`
       }
@@ -59,3 +61,5 @@ export default class {
     });
   }
 }
+
+export default new SlackBot({ botToken, userToken });
