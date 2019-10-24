@@ -6,7 +6,10 @@ import { readFileSync } from 'fs';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const { SLACK_BOT_TOKEN: botToken, SLACK_USER_TOKEN: userToken } = process.env;
+const {
+  ENVBOT_SLACK_BOT_TOKEN: botToken,
+  ENVBOT_SLACK_USER_TOKEN: userToken
+} = process.env;
 
 class SlackBot {
   web: WebClient;
