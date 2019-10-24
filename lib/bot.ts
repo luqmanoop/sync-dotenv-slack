@@ -3,7 +3,9 @@ import { Token, Channel, IFile } from './models';
 import Axios from 'axios';
 import tempWrite from 'temp-write';
 import { readFileSync } from 'fs';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const { SLACK_BOT_TOKEN: botToken, SLACK_USER_TOKEN: userToken } = process.env;
 
 class SlackBot {
