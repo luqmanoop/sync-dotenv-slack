@@ -5,7 +5,7 @@ import { alertChannel } from './lib';
 import { Config } from './lib/models';
 
 const defaultConfig: Config = {
-  include: [],
+  include: ['*'],
   channel: null
 };
 
