@@ -1,6 +1,8 @@
 # sync-dotenv-slack
 > Keep .env in sync with teammates on Slack
 
+![sync-dotenv-slack-demo](https://media.giphy.com/media/Xd744GG44wZWXJzdJb/giphy.gif)
+
 While having a `.env.example` file committed to source control might help in letting teammates know that certain environmental variables are required to get up and running with a project, getting them the values can be a pain. Even worse, alerting them when any of those values (or variables) changes can be a drag.
 
 `sync-dotenv-slack` automates the process of keeping your teammates in the loop when `.env` changes (locally) by securely notifying them on Slack.
