@@ -1,7 +1,7 @@
 {
   "name": "sync-dotenv-slack",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.0",
+  "description": "Keep .env in sync with teammates on Slack",
   "main": "dist/cli.js",
   "scripts": {
     "clean": "rimraf dist",
@@ -21,8 +21,29 @@
     "type": "git",
     "url": "git+https://github.com/codeshifu/sync-dotenv-slack.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    ".env",
+		"slack",
+		"dotenv",
+		"environment variables",
+		"sync env slack",
+		"sync dotenv slack"
+  ],
+  "files": [
+    "readme.md",
+    "dist"
+  ],
+  "author": "Luqman Olushi <olushilukmon03@gmail.com> (https://github.com/codeshifu)",
+  "contributors": [
+    {
+      "name": "Luqman Olushi",
+      "url": "https://github.com/codeshifu"
+    },
+    {
+      "name": "Kizito Akhilome",
+      "url": "https://github.com/akhilome"
+    }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/codeshifu/sync-dotenv-slack/issues"
