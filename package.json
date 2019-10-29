@@ -5,13 +5,13 @@
   "main": "dist/cli.js",
   "scripts": {
     "clean": "rimraf dist",
-    "bundle": "parcel build cli.ts --target node --no-cache",
+    "bundle": "parcel build cli.ts --target node --no-cache --no-source-maps",
     "build": "npm-run-all --parallel clean bundle",
     "build:start": "npm run build -- start",
     "dev": "nodemon --ext ts,json --exec 'npm run build && node dist/cli.js'",
     "start": "node dist/cli.js",
     "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "test:watch": "jest --watch"
   },
   "bin": {
@@ -23,11 +23,11 @@
   },
   "keywords": [
     ".env",
-		"slack",
-		"dotenv",
-		"environment variables",
-		"sync env slack",
-		"sync dotenv slack"
+    "slack",
+    "dotenv",
+    "environment variables",
+    "sync env slack",
+    "sync dotenv slack"
   ],
   "files": [
     "readme.md",
@@ -55,6 +55,7 @@
     "@types/ora": "3.2.0",
     "@types/pkg-conf": "3.0.0",
     "@types/temp-write": "4.0.0",
+    "coveralls": "3.0.7",
     "jest": "24.9.0",
     "nodemon": "1.19.3",
     "npm-run-all": "4.1.5",

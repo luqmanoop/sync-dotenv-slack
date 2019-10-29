@@ -11,7 +11,7 @@ notifications:
 script:
   - npm run test
 after_success:
-  - npm run coverage
+  - npm run test:coverage
 branches:
   only: master
   except: /^v\d+\.\d+\.\d+$/
