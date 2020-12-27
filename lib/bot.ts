@@ -5,7 +5,7 @@ import tempWrite from 'temp-write';
 import { readFileSync } from 'fs';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({path: ".env.local"});
 const {
   ENVBOT_SLACK_BOT_TOKEN: botToken,
   ENVBOT_SLACK_USER_TOKEN: userToken

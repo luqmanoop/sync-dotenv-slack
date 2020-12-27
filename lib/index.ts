@@ -27,7 +27,7 @@ export const alertChannel = async (options: Config) => {
     }
 
     spinner.text = `found ${channelName} channel`;
-    const localEnv = parseEnv();
+    const localEnv = parseEnv('.env.local');
     const latestFileFromBot = await bot.latestFile(channel);
 
     if (latestFileFromBot && latestFileFromBot.url_private) {
@@ -56,6 +56,7 @@ export const alertChannel = async (options: Config) => {
     }
     exit(0, spinner);
   } catch (error) {
+    console.log(error)
     exit(1, spinner, 'failed to sync env');
   }
 };
