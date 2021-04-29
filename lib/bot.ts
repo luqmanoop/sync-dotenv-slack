@@ -61,6 +61,7 @@ class SlackBot {
       return this.web.files.upload({
         filename: Date.now().toString(),
         file,
+        fileType: "shell",
         channels: channel.name
       });
     });
