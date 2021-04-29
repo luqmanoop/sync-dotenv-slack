@@ -72,6 +72,7 @@ describe('SlackBot', () => {
       await SlackBot.upload(testData.fileContents, channel);
       expect(SlackBot.web.files.upload).toHaveBeenCalledWith({
         file,
+        fileType: "shell",
         channels: channel.name,
         filename: expect.any(String)
       });
